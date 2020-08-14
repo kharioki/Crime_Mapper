@@ -23,7 +23,7 @@ function CrimeMap() {
   // load and prepare data
   const url =
     'https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2019-10';
-  const { data, error } = useSWR(url, fetcher);
+  const { data, error } = useSWR(url);
   const crimes = data && !error ? data.slice(0, 2000) : [];
 
   // superclustering - first make a point
@@ -128,5 +128,9 @@ function CrimeMap() {
 }
 
 export default function App() {
-  return <CrimeMap />;
+  return (
+    <SWRConfig value={{ revalidateOnFocus: false, fetcher }}>
+      <CrimeMap />
+    </SWRConfig>
+  );
 }
