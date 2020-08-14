@@ -31,6 +31,10 @@ function Crimes() {
 function DisplayCrimes({ crimes, categories }) {
   const [filterCategory, setFilterCategory] = useState(null);
 
+  const filteredCrimes = filterCategory
+    ? crimes.filter(crime => crime.category === filterCategory)
+    : crimes;
+
   return (
     <>
       {categories.map(category => (
@@ -43,7 +47,7 @@ function DisplayCrimes({ crimes, categories }) {
         <button onClick={() => setFilterCategory(null)}>reset</button>
       )}
 
-      <pre>{JSON.stringify(crimes, null, 2)}</pre>
+      <pre>{JSON.stringify(filteredCrimes, null, 2)}</pre>
     </>
   );
 }
