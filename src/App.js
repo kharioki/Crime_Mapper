@@ -53,7 +53,7 @@ function CrimeMap() {
     : null;
 
   // get clusters
-  const { clusters } = useSupercluster({
+  const { clusters, supercluster } = useSupercluster({
     points,
     zoom: viewport.zoom,
     bounds,
@@ -62,8 +62,6 @@ function CrimeMap() {
       maxZoom: 20
     }
   });
-
-  console.log({ clusters });
 
   // return map
   return (
@@ -92,6 +90,19 @@ function CrimeMap() {
                 style={{
                   width: `${10 + (pointCount / points.length) * 40}px`,
                   height: `${10 + (pointCount / points.length) * 40}px`
+                }}
+                onClick={() => {
+                  const expansionZoom = Math.min(
+                    supercluster.getClusterExpansionZoom(cluster.id),
+                    20
+                  );
+                  setViewport({
+                    ...viewport,
+                    latitude,
+                    longitude,
+                    zoom: expansionZoom,
+                    transitionInterpolator: new FlyToInterpolator({ speed: 2 })
+                  });
                 }}
               >
                 {pointCount}
