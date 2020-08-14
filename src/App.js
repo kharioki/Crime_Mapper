@@ -24,11 +24,44 @@ function CrimeMap() {
   const url =
     'https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2019-10';
   const { data, error } = useSWR(url, fetcher);
-  const crimes = data && !error ? data.slice(0, 100) : [];
+  const crimes = data && !error ? data.slice(0, 200) : [];
+
+  // superclustering
+  // first make a point
+  const points = crimes.map(crime => ({
+    type: 'Feature',
+    properties: {
+      cluster: false,
+      crimeId: crime.id,
+      category: crime.category
+    },
+    geometry: {
+      type: 'Point',
+      coordinates: [crime.location.longitude, crime.location.latitude]
+    }
+  }));
 
   // get map bounds
+  const bounds = mapRef.current
+    ? mapRef.current
+        .getMap()
+        .getBounds()
+        .toArray()
+        .flat()
+    : null;
 
   // get clusters
+  const { clusters } = useSupercluster({
+    points,
+    zoom: viewport.zoom,
+    bounds,
+    options: {
+      radius: 75,
+      maxZoom: 20
+    }
+  });
+
+  console.log({ clusters });
 
   // return map
   return (
@@ -39,6 +72,7 @@ function CrimeMap() {
       onViewportChange={newViewport => {
         setViewport({ ...newViewport });
       }}
+      ref={mapRef}
     >
       {/*markers */}
       {crimes.map(crime => (
