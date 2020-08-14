@@ -87,7 +87,15 @@ function CrimeMap() {
         if (isCluster) {
           return (
             <Marker key={cluster.id} latitude={latitude} longitude={longitude}>
-              <div className="cluster-marker">{pointCount}</div>
+              <div
+                className="cluster-marker"
+                style={{
+                  width: `${10 + (pointCount / points.length) * 40}px`,
+                  height: `${10 + (pointCount / points.length) * 40}px`
+                }}
+              >
+                {pointCount}
+              </div>
             </Marker>
           );
         }
