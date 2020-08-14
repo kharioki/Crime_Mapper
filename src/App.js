@@ -6,7 +6,8 @@ const fetcher = (...args) => fetch(...args).then(res => res.json());
 
 export default function App() {
   return (
-    <SWRConfig value={{ fetcher }}>
+    // we use revalidateOnFocus: false to prevent a refetch every time the browser tab is focused
+    <SWRConfig value={{ revalidateOnFocus: false, fetcher }}>
       <Crimes />
     </SWRConfig>
   );
