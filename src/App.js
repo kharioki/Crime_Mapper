@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useSWR, { SWRConfig } from 'swr';
 
 // create an async function
@@ -20,9 +20,30 @@ function Crimes() {
   if (error) return <div>Error...</div>;
   if (!data) return <div>Loading...</div>;
 
-  return <DisplayCrimes crimes={data} />;
+  return (
+    <DisplayCrimes
+      crimes={data}
+      categories={[...new Set(data.map(crime => crime.category))]}
+    />
+  );
 }
 
-function DisplayCrimes({ crimes }) {
-  return <pre>{JSON.stringify(crimes, null, 2)}</pre>;
+function DisplayCrimes({ crimes, categories }) {
+  const [filterCategory, setFilterCategory] = useState(null);
+
+  return (
+    <>
+      {categories.map(category => (
+        <button onClick={() => setFilterCategory(category)} key={category}>
+          {category}
+        </button>
+      ))}
+
+      {filterCategory && (
+        <button onClick={() => setFilterCategory(null)}>reset</button>
+      )}
+
+      <pre>{JSON.stringify(crimes, null, 2)}</pre>
+    </>
+  );
 }
