@@ -24,10 +24,9 @@ function CrimeMap() {
   const url =
     'https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2019-10';
   const { data, error } = useSWR(url, fetcher);
-  const crimes = data && !error ? data.slice(0, 200) : [];
+  const crimes = data && !error ? data.slice(0, 2000) : [];
 
-  // superclustering
-  // first make a point
+  // superclustering - first make a point
   const points = crimes.map(crime => ({
     type: 'Feature',
     properties: {
@@ -37,7 +36,10 @@ function CrimeMap() {
     },
     geometry: {
       type: 'Point',
-      coordinates: [crime.location.longitude, crime.location.latitude]
+      coordinates: [
+        parseFloat(crime.location.longitude),
+        parseFloat(crime.location.latitude)
+      ]
     }
   }));
 
@@ -75,17 +77,32 @@ function CrimeMap() {
       ref={mapRef}
     >
       {/*markers */}
-      {crimes.map(crime => (
-        <Marker
-          key={crime.id}
-          latitude={parseFloat(crime.location.latitude)}
-          longitude={parseFloat(crime.location.longitude)}
-        >
-          <button className="crime-marker">
-            <img src="/custody.svg" alt="custody" />
-          </button>
-        </Marker>
-      ))}
+      {clusters.map(cluster => {
+        const [longitude, latitude] = cluster.geometry.coordinates;
+        const {
+          cluster: isCluster,
+          point_count: pointCount
+        } = cluster.properties;
+
+        if (isCluster) {
+          return (
+            <Marker key={cluster.id} latitude={latitude} longitude={longitude}>
+              <div className="cluster-marker">{pointCount}</div>
+            </Marker>
+          );
+        }
+        return (
+          <Marker
+            key={cluster.properties.id}
+            latitude={latitude}
+            longitude={longitude}
+          >
+            <button className="crime-marker">
+              <img src="/custody.svg" alt="custody" />
+            </button>
+          </Marker>
+        );
+      })}
     </ReactMapGL>
   );
 }
