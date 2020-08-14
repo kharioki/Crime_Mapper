@@ -9,10 +9,10 @@ function App() {
     'https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2019-10';
   const { data, error } = useSWR(url, fetcher);
 
-  console.log({ data });
-  console.log({ error });
+  if (error) return <div>Error...</div>;
+  if (!data) return <div>Loading...</div>;
 
-  return <div>Hello</div>;
+  return <pre>{JSON.stringify(data, null, 2)}</pre>;
 }
 
 export default App;
