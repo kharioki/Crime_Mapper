@@ -101,7 +101,8 @@ function CrimeMap() {
                     latitude,
                     longitude,
                     zoom: expansionZoom,
-                    transitionInterpolator: new FlyToInterpolator({ speed: 2 })
+                    transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+                    transitionDuration: 'auto'
                   });
                 }}
               >
